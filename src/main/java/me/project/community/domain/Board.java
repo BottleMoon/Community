@@ -28,11 +28,16 @@ public class Board {
     @Column(name = "created_date")
     private LocalDateTime createdDate;
 
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+
     @Builder
-    public Board(BoardRequestDto boardRequestDto){
-        this.id = boardRequestDto.getId();
-        this.title = boardRequestDto.getTitle();
-        this. content = boardRequestDto.getContent();
-        this.createdDate = LocalDateTime.now();
+    public Board(Long id, String title, String content, LocalDateTime createdDate, User user){
+        this.id = id;
+        this.title = title;
+        this.content = content;
+        this.createdDate = createdDate;
+        this.user = user;
     }
 }

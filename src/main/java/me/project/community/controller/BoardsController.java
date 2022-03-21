@@ -11,25 +11,30 @@ import java.util.List;
 @RequestMapping("boards")
 public class BoardsController {
 
-        private final BoardsService boardsService;
+    private final BoardsService boardsService;
 
-        BoardsController(BoardsService boardsService){
-            this.boardsService = boardsService;
-        }
-
+    BoardsController(BoardsService boardsService) {
+        this.boardsService = boardsService;
+    }
 
     @GetMapping("")
-    public List<BoardResponseDto> findAll(){
+    public List<BoardResponseDto> findAll() {
         return boardsService.findAll();
     }
 
     @GetMapping("/{id}")
-    public BoardResponseDto findBoardById(@PathVariable Long id){
+    public BoardResponseDto findBoardById(@PathVariable Long id) {
         return boardsService.findBoardById(id);
     }
 
     @PostMapping("")
-    public void createBoard(@RequestBody BoardRequestDto boardRequestDto){
-            boardsService.createBoard(boardRequestDto);
+    public void createBoard(@RequestBody BoardRequestDto boardRequestDto) {
+        boardsService.createBoard(boardRequestDto);
     }
+
+    @PatchMapping("/{id}")
+    public void patchBoard(@PathVariable Long id, @RequestBody BoardRequestDto boardRequestDto) {
+        boardsService.patchBoard(boardRequestDto);
+    }
+
 }

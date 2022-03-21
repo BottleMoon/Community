@@ -7,6 +7,4 @@ public class BoardRequestDto {
     Long id;
     String title;
     String content;
-
-
 }
