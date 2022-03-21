@@ -2,6 +2,7 @@ package me.project.community.controller;
 
 import me.project.community.dto.UserRequestDto;
 import me.project.community.service.UsersService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -22,8 +23,8 @@ public class UsersController {
     }
 
     @PostMapping("/login")
-    public void login(HttpServletRequest request, @RequestBody UserRequestDto userRequestDto) {
-        usersService.login(request, userRequestDto);
+    public ResponseEntity login(HttpServletRequest request, @RequestBody UserRequestDto userRequestDto) {
+        return usersService.login(request, userRequestDto);
     }
 
     @GetMapping("session")

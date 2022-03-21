@@ -47,12 +47,12 @@ public class UsersService {
         if (user.isPresent()) {
             if (passwordEncoder.matches(userRequestDto.getPassword(), user.get().getPassword())) {
                 userInfo.setId(userRequestDto.getId());
-
+                System.out.println("present");
                 return ResponseEntity.status(HttpStatus.ACCEPTED).build();
             }
         }
+        System.out.println("not present");
         return new ApiExceptionAdvice().exceptionHandler(new ApiException(ExceptionEnum.LOGIN_FAIL_EXCEPTION));
-
     }
 
     public String getSession() {
