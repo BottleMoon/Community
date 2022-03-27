@@ -2,6 +2,8 @@ package me.project.community.controller;
 
 import me.project.community.dto.BoardRequestDto;
 import me.project.community.dto.BoardResponseDto;
+import me.project.community.dto.ReplyRequestDto;
+import me.project.community.dto.ReplyResponseDto;
 import me.project.community.service.BoardsService;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,6 +18,8 @@ public class BoardsController {
     BoardsController(BoardsService boardsService) {
         this.boardsService = boardsService;
     }
+
+    //boards
 
     @GetMapping("")
     public List<BoardResponseDto> findAll() {
@@ -35,6 +39,18 @@ public class BoardsController {
     @PatchMapping("/{id}")
     public void patchBoard(@PathVariable Long id, @RequestBody BoardRequestDto boardRequestDto) {
         boardsService.patchBoard(boardRequestDto);
+    }
+
+
+    //replies
+    @PostMapping("/replies/{boardId}")
+    public void postReply(@PathVariable Long boardId, @RequestBody ReplyRequestDto replyRequestDto) {
+        boardsService.postReply(boardId, replyRequestDto);
+    }
+
+    @GetMapping("/replies/{boardId}")
+    public List<ReplyResponseDto> getReply(@PathVariable Long boardId) {
+        return boardsService.getReply(boardId);
     }
 
 }

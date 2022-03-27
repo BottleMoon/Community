@@ -1,12 +1,18 @@
 package me.project.community.service;
 
 import me.project.community.domain.Board;
+import me.project.community.domain.Reply;
 import me.project.community.dto.BoardRequestDto;
 import me.project.community.dto.BoardResponseDto;
+import me.project.community.dto.ReplyRequestDto;
+import me.project.community.dto.ReplyResponseDto;
 import me.project.community.repository.BoardsRepository;
+import me.project.community.repository.RepliesRepository;
 import me.project.community.repository.UsersRepository;
+import me.project.community.session.UserInfo;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -14,12 +20,16 @@ import java.util.stream.Collectors;
 public class BoardsService {
     private final BoardsRepository boardsRepository;
     private final UsersRepository usersRepository;
+    private final RepliesRepository repliesRepository;
     private final UsersService usersService;
+    private final UserInfo userInfo;
 
-    BoardsService(BoardsRepository boardsRepository, UsersRepository usersRepository, UsersService usersService) {
+    BoardsService(BoardsRepository boardsRepository, UsersRepository usersRepository, RepliesRepository repliesRepository, UsersService usersService, UserInfo userInfo) {
         this.boardsRepository = boardsRepository;
         this.usersRepository = usersRepository;
+        this.repliesRepository = repliesRepository;
         this.usersService = usersService;
+        this.userInfo = userInfo;
     }
 
     public List<BoardResponseDto> findAll() {
@@ -32,7 +42,7 @@ public class BoardsService {
     }
 
     public void createBoard(BoardRequestDto boardRequestDto) {
-        Board board = dtoToEntity(boardRequestDto);
+        Board board = boardDtoToEntity(boardRequestDto);
         boardsRepository.save(board);
     }
 
@@ -48,7 +58,7 @@ public class BoardsService {
         boardsRepository.save(board);
     }
 
-    public Board dtoToEntity(BoardRequestDto boardRequestDto) {
+    public Board boardDtoToEntity(BoardRequestDto boardRequestDto) {
         Board board = Board.builder()
                 .id(boardRequestDto.getId())
                 .title(boardRequestDto.getTitle())
@@ -58,4 +68,26 @@ public class BoardsService {
         return board;
     }
 
+
+    //reply
+
+    public void postReply(Long boardId, ReplyRequestDto replyRequestDto) {
+        Reply reply = replyDtoToEntity(replyRequestDto, boardId);
+        repliesRepository.save(reply);
+    }
+
+    public Reply replyDtoToEntity(ReplyRequestDto replyRequestDto, Long boardId) {
+        Reply reply = Reply.builder()
+                .id(replyRequestDto.getId())
+                .content(replyRequestDto.getContent())
+                .createdTime(LocalDateTime.now())
+                .board(boardsRepository.findById(boardId).get())
+                .user(usersRepository.findById(userInfo.getId()).get())
+                .build();
+        return reply;
+    }
+
+    public List<ReplyResponseDto> getReply(Long boardId) {
+        return repliesRepository.findAllByBoardId(boardId).stream().map(ReplyResponseDto::new).collect(Collectors.toList());
+    }
 }
