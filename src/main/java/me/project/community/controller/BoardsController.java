@@ -5,6 +5,7 @@ import me.project.community.dto.BoardResponseDto;
 import me.project.community.dto.ReplyRequestDto;
 import me.project.community.dto.ReplyResponseDto;
 import me.project.community.service.BoardsService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -39,6 +40,11 @@ public class BoardsController {
     @PatchMapping("/{id}")
     public void patchBoard(@PathVariable Long id, @RequestBody BoardRequestDto boardRequestDto) {
         boardsService.patchBoard(boardRequestDto);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity deleteBoard(@PathVariable Long id) {
+        return boardsService.deleteBoard(id);
     }
 
 

@@ -6,10 +6,15 @@ import me.project.community.dto.BoardRequestDto;
 import me.project.community.dto.BoardResponseDto;
 import me.project.community.dto.ReplyRequestDto;
 import me.project.community.dto.ReplyResponseDto;
+import me.project.community.error.ApiException;
+import me.project.community.error.ApiExceptionAdvice;
+import me.project.community.error.ExceptionEnum;
 import me.project.community.repository.BoardsRepository;
 import me.project.community.repository.RepliesRepository;
 import me.project.community.repository.UsersRepository;
 import me.project.community.session.UserInfo;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -68,6 +73,14 @@ public class BoardsService {
         return board;
     }
 
+    public ResponseEntity deleteBoard(Long id) {
+        if (userInfo.getId().equals(boardsRepository.findById(id).get().getUser().getId())) {
+            boardsRepository.deleteById(id);
+            return ResponseEntity.status(HttpStatus.OK).build();
+        } else {
+            return new ApiExceptionAdvice().exceptionHandler(new ApiException(ExceptionEnum.DELETE_FAIL_EXCEPTION));
+        }
+    }
 
     //reply
 
@@ -90,4 +103,5 @@ public class BoardsService {
     public List<ReplyResponseDto> getReply(Long boardId) {
         return repliesRepository.findAllByBoardId(boardId).stream().map(ReplyResponseDto::new).collect(Collectors.toList());
     }
+
 }
