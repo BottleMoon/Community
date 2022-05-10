@@ -14,14 +14,14 @@ public class BoardResponseDto {
     Long id;
     String title;
     String content;
-    String userid;
+    String userId;
     LocalDateTime createdDate;
 
     public BoardResponseDto(Board board) {
         this.id = board.getId();
         this.title = board.getTitle();
         this.content = board.getContent();
-        this.userid = board.getUser().getId();
+        this.userId = board.getUser().getId();
         this.createdDate = board.getCreatedDate();
     }
 }

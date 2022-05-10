@@ -46,12 +46,20 @@ public class BoardsService {
         return new BoardResponseDto(board);
     }
 
+    public List<BoardResponseDto> findAllBoardByUserId() {
+        return boardsRepository.findAllByUserId(userInfo.getId()).stream().map(BoardResponseDto::new).collect(Collectors.toList());
+
+    }
+
     public void createBoard(BoardRequestDto boardRequestDto) {
         Board board = boardDtoToEntity(boardRequestDto);
         boardsRepository.save(board);
     }
 
-    public void patchBoard(BoardRequestDto boardRequestDto) {
+    public ResponseEntity patchBoard(BoardRequestDto boardRequestDto) {
+        if (!userInfo.getId().equals(boardDtoToEntity(boardRequestDto).getUser().getId())) {
+            return new ApiExceptionAdvice().exceptionHandler(new ApiException(ExceptionEnum.NO_PERMISSION_EXCEPTION));
+        }
         Board board = boardsRepository.findById(boardRequestDto.getId()).get();
         board = Board.builder()
                 .id(boardRequestDto.getId())
@@ -61,6 +69,7 @@ public class BoardsService {
                 .createdDate(board.getCreatedDate())
                 .build();
         boardsRepository.save(board);
+        return ResponseEntity.status(HttpStatus.ACCEPTED).build();
     }
 
     public Board boardDtoToEntity(BoardRequestDto boardRequestDto) {
@@ -68,7 +77,8 @@ public class BoardsService {
                 .id(boardRequestDto.getId())
                 .title(boardRequestDto.getTitle())
                 .content(boardRequestDto.getContent())
-                .user(usersRepository.getById(usersService.getSession()))
+                .user(usersRepository.getById(userInfo.getId()))
+                .createdDate(LocalDateTime.now())
                 .build();
         return board;
     }
@@ -78,7 +88,7 @@ public class BoardsService {
             boardsRepository.deleteById(id);
             return ResponseEntity.status(HttpStatus.OK).build();
         } else {
-            return new ApiExceptionAdvice().exceptionHandler(new ApiException(ExceptionEnum.DELETE_FAIL_EXCEPTION));
+            return new ApiExceptionAdvice().exceptionHandler(new ApiException(ExceptionEnum.NO_PERMISSION_EXCEPTION));
         }
     }
 
@@ -104,4 +114,8 @@ public class BoardsService {
         return repliesRepository.findAllByBoardId(boardId).stream().map(ReplyResponseDto::new).collect(Collectors.toList());
     }
 
+    //permission
+    public Boolean checkBoardPermission(Long boardId) {
+        return boardsRepository.findById(boardId).get().getUser().getId().equals(userInfo.getId());
+    }
 }

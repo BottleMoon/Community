@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import java.time.LocalDateTime;
 
 @Entity
 @NoArgsConstructor
@@ -19,10 +20,14 @@ public class User {
     @Column(name = "password")
     private String password;
 
+    @Column(name = "createdtime")
+    private LocalDateTime createTime;
+
     @Builder
-    public User(String id, String password) {
+    public User(String id, String password, LocalDateTime createdTime) {
         this.id = id;
         this.password = password;
+        this.createTime = createdTime;
     }
 
 }

@@ -1,13 +1,10 @@
 package me.project.community.domain;
 
-import com.sun.istack.NotNull;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import me.project.community.dto.BoardRequestDto;
 
 import javax.persistence.*;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity(name = "board")
@@ -15,15 +12,15 @@ import java.time.LocalDateTime;
 @Getter
 public class Board {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private  Long id;
+    private Long id;
 
     @Column(name = "title")
-    private  String title;
+    private String title;
 
     @Column(name = "content")
-    private  String content;
+    private String content;
 
     @Column(name = "created_date")
     private LocalDateTime createdDate;
@@ -33,7 +30,7 @@ public class Board {
     private User user;
 
     @Builder
-    public Board(Long id, String title, String content, LocalDateTime createdDate, User user){
+    public Board(Long id, String title, String content, LocalDateTime createdDate, User user) {
         this.id = id;
         this.title = title;
         this.content = content;

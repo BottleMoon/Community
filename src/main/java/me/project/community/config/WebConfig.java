@@ -33,12 +33,11 @@ public class WebConfig implements WebMvcConfigurer {
         registry
                 .addInterceptor(loginInterceptor)
                 //LoginInterceptor 적용 URL
-                .addPathPatterns("/*")
-                //LoginInterceptor 제외 URL
-                .excludePathPatterns("/boards")
-                .excludePathPatterns("/users")
-                .excludePathPatterns("/users/create")
-                .excludePathPatterns("/users/login");
-
+                .addPathPatterns("/**");
+        //LoginInterceptor 제외 URL
+        //.excludePathPatterns("/boards")
+        //.excludePathPatterns("/users")
+        //.excludePathPatterns("/users/create")
+        //.excludePathPatterns("/users/login");
     }
 }

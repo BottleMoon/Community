@@ -3,6 +3,7 @@ package me.project.community.service;
 
 import me.project.community.domain.User;
 import me.project.community.dto.UserRequestDto;
+import me.project.community.dto.UserResponseDto;
 import me.project.community.error.ApiException;
 import me.project.community.error.ApiExceptionAdvice;
 import me.project.community.error.ExceptionEnum;
@@ -14,6 +15,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Service
@@ -36,6 +39,7 @@ public class UsersService {
             User user = User.builder()
                     .id(userRequestDto.getId())
                     .password(encoded)
+                    .createdTime(LocalDateTime.now())
                     .build();
             usersRepository.save(user);
             return ResponseEntity.status(HttpStatus.CREATED).build();
@@ -55,7 +59,24 @@ public class UsersService {
         return new ApiExceptionAdvice().exceptionHandler(new ApiException(ExceptionEnum.LOGIN_FAIL_EXCEPTION));
     }
 
+    public ResponseEntity logout(HttpServletRequest request) {
+        HttpSession session = request.getSession();
+        session.invalidate();
+        return ResponseEntity.status(HttpStatus.OK).build();
+    }
+
     public String getSession() {
         return userInfo.getId();
+    }
+
+    public UserResponseDto getUser() {
+        System.out.println(userInfo.getId());
+        UserResponseDto responseDto = entityToDto(usersRepository.findById(userInfo.getId()).get());
+        return responseDto;
+    }
+
+    public UserResponseDto entityToDto(User user) {
+        UserResponseDto userResponseDto = new UserResponseDto(user);
+        return userResponseDto;
     }
 }

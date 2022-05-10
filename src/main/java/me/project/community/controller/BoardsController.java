@@ -32,14 +32,19 @@ public class BoardsController {
         return boardsService.findBoardById(id);
     }
 
+    @GetMapping("/myboards")
+    public List<BoardResponseDto> findAllBoardById() {
+        return boardsService.findAllBoardByUserId();
+    }
+
     @PostMapping("")
     public void createBoard(@RequestBody BoardRequestDto boardRequestDto) {
         boardsService.createBoard(boardRequestDto);
     }
 
     @PatchMapping("/{id}")
-    public void patchBoard(@PathVariable Long id, @RequestBody BoardRequestDto boardRequestDto) {
-        boardsService.patchBoard(boardRequestDto);
+    public ResponseEntity patchBoard(@PathVariable Long id, @RequestBody BoardRequestDto boardRequestDto) {
+        return boardsService.patchBoard(boardRequestDto);
     }
 
     @DeleteMapping("/{id}")
@@ -58,5 +63,13 @@ public class BoardsController {
     public List<ReplyResponseDto> getReply(@PathVariable Long boardId) {
         return boardsService.getReply(boardId);
     }
+
+
+    //permission
+    @GetMapping("permission/{boardId}")
+    public Boolean checkBoardPermission(@PathVariable Long boardId) {
+        return boardsService.checkBoardPermission(boardId);
+    }
+
 
 }

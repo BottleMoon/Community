@@ -8,7 +8,7 @@ import org.springframework.http.HttpStatus;
 @ToString
 public enum ExceptionEnum {
     LOGIN_FAIL_EXCEPTION(HttpStatus.ACCEPTED, "E01", "id or password is not correct"),
-    DELETE_FAIL_EXCEPTION(HttpStatus.ACCEPTED, "E02", "No permission for delete");
+    NO_PERMISSION_EXCEPTION(HttpStatus.ACCEPTED, "E02", "No permission");
 
     private final HttpStatus status;
     private final String code;
@@ -19,6 +19,4 @@ public enum ExceptionEnum {
         this.code = code;
         this.message = message;
     }
-
-
 }

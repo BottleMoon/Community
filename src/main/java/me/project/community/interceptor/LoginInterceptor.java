@@ -17,12 +17,13 @@ public class LoginInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        if (userInfo != null) {
-            return true;
+        if (userInfo.getId() != null) {
+            System.out.println("로그인 됨.");
+            
         } else {
-            response.sendRedirect("/signin");
-            return false;
+            System.out.println("로그인 안됨");
         }
+        return true;
     }
 
     @Override
