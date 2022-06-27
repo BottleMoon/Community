@@ -26,14 +26,12 @@ public class BoardsService {
     private final BoardsRepository boardsRepository;
     private final UsersRepository usersRepository;
     private final RepliesRepository repliesRepository;
-    private final UsersService usersService;
     private final UserInfo userInfo;
 
-    BoardsService(BoardsRepository boardsRepository, UsersRepository usersRepository, RepliesRepository repliesRepository, UsersService usersService, UserInfo userInfo) {
+    BoardsService(BoardsRepository boardsRepository, UsersRepository usersRepository, RepliesRepository repliesRepository, UserInfo userInfo) {
         this.boardsRepository = boardsRepository;
         this.usersRepository = usersRepository;
         this.repliesRepository = repliesRepository;
-        this.usersService = usersService;
         this.userInfo = userInfo;
     }
 
@@ -96,17 +94,30 @@ public class BoardsService {
 
     public void postReply(Long boardId, ReplyRequestDto replyRequestDto) {
         Reply reply = replyDtoToEntity(replyRequestDto, boardId);
+
         repliesRepository.save(reply);
     }
 
     public Reply replyDtoToEntity(ReplyRequestDto replyRequestDto, Long boardId) {
-        Reply reply = Reply.builder()
-                .id(replyRequestDto.getId())
-                .content(replyRequestDto.getContent())
-                .createdTime(LocalDateTime.now())
-                .board(boardsRepository.findById(boardId).get())
-                .user(usersRepository.findById(userInfo.getId()).get())
-                .build();
+        Reply reply;
+        if (replyRequestDto.getParentsId() == 0) {
+            reply = Reply.builder()
+                    .content(replyRequestDto.getContent())
+                    .createdTime(LocalDateTime.now())
+                    .groupId(repliesRepository.maxGroupId(boardId) + 1)
+                    .board(boardsRepository.findById(boardId).get())
+                    .user(usersRepository.findById(userInfo.getId()).get())
+                    .build();
+        } else {
+            reply = Reply.builder()
+                    .content(replyRequestDto.getContent())
+                    .createdTime(LocalDateTime.now())
+                    .groupId(replyRequestDto.getParentsId())
+                    .reply(repliesRepository.findById(replyRequestDto.getParentsId()).get())
+                    .board(boardsRepository.findById(boardId).get())
+                    .user(usersRepository.findById(userInfo.getId()).get())
+                    .build();
+        }
         return reply;
     }
 
@@ -114,8 +125,10 @@ public class BoardsService {
         return repliesRepository.findAllByBoardId(boardId).stream().map(ReplyResponseDto::new).collect(Collectors.toList());
     }
 
+
     //permission
     public Boolean checkBoardPermission(Long boardId) {
         return boardsRepository.findById(boardId).get().getUser().getId().equals(userInfo.getId());
     }
+
 }

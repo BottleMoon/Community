@@ -7,5 +7,6 @@ import lombok.Getter;
 public class ReplyRequestDto {
     Long id;
     String content;
+    Long parentsId;
 
 }

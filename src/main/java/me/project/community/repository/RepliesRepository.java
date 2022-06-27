@@ -7,6 +7,9 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.List;
 
 public interface RepliesRepository extends JpaRepository<Reply, Long> {
-    @Query("select r from Reply r where r.board.id = :boardId")
+    @Query("select r from reply r where r.board.id = :boardId order by r.groupId, r.createdTime")
     List<Reply> findAllByBoardId(Long boardId);
+
+    @Query("select coalesce(max(r.groupId),0) from reply r where r.board.id = :boardId  ")
+    Long maxGroupId(Long boardId);
 }

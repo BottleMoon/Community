@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
-@Entity
+@Entity(name = "reply")
 @Getter
 @NoArgsConstructor
 public class Reply {
@@ -19,6 +19,13 @@ public class Reply {
 
     private LocalDateTime createdTime;
 
+    private Long groupId;
+
+    //대댓글
+    @ManyToOne
+    @JoinColumn(name = "reply_id")
+    private Reply reply;
+
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
@@ -28,10 +35,12 @@ public class Reply {
     private Board board;
 
     @Builder
-    public Reply(Long id, String content, LocalDateTime createdTime, User user, Board board) {
+    public Reply(Long id, String content, LocalDateTime createdTime, Long groupId, Reply reply, User user, Board board) {
         this.id = id;
         this.content = content;
         this.createdTime = createdTime;
+        this.groupId = groupId;
+        this.reply = reply;
         this.user = user;
         this.board = board;
     }
