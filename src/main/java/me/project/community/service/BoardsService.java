@@ -112,7 +112,7 @@ public class BoardsService {
             reply = Reply.builder()
                     .content(replyRequestDto.getContent())
                     .createdTime(LocalDateTime.now())
-                    .groupId(replyRequestDto.getParentsId())
+                    .groupId(repliesRepository.findById(replyRequestDto.getParentsId()).get().getGroupId())
                     .reply(repliesRepository.findById(replyRequestDto.getParentsId()).get())
                     .board(boardsRepository.findById(boardId).get())
                     .user(usersRepository.findById(userInfo.getId()).get())
