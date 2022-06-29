@@ -35,6 +35,8 @@ public class UsersService {
         String encoded = passwordEncoder.encode(userRequestDto.getPassword());
         if (usersRepository.findById(userRequestDto.getId()).isPresent()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        } else if (userRequestDto.getId().length() < 4 || userRequestDto.getPassword().length() < 4) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         } else {
             User user = User.builder()
                     .id(userRequestDto.getId())
